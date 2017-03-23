@@ -1,0 +1,14 @@
+*.sh
+*.ps1
+*.cake
+*.ins
+legacy*
+*.fs
+*.fsproj
+*.sln
+*.cmd
+obj
+*.userprefs
+packages
+tools
+Tests

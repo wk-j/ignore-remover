@@ -6,9 +6,7 @@ open System.Text
 open IgnoreRemover.Formatter
 open System
 
-
 let executeCommand cmd args=
-    let builder = StringBuilder()
     let info = ProcessStartInfo()
     info.FileName <- cmd
     info.Arguments <- args
@@ -36,5 +34,3 @@ let executeCommand cmd args=
     ps.ErrorDataReceived.Add(errorHandler)
     ps.BeginErrorReadLine()
     ps.WaitForExit() |> ignore
-
-    //builder.ToString().Split('\n')

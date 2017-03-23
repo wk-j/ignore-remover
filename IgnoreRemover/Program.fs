@@ -16,29 +16,35 @@ let findGitProjects root =
             dir.Parent.FullName |> ValidPath
         )
 
-let remove = function
+let remove dryRun = function
     | ValidPath path -> 
         Environment.CurrentDirectory <- path
-        f "Cleaning %s" path |> writeInfo
-        executeCommand "git" "clean -Xdf"
-    
-let verifiyGitDir root =
-    let gitDir = Path.Combine(root, ".git")
-    match Directory.Exists gitDir with
-    | true -> Result.Ok root
-    | false -> Result.Error "Invalid git path"
+        match dryRun with
+        | false -> 
+            f "Cleaning %s" path |> writeInfo
+            executeCommand "git" "clean -Xdf"
+        | true -> 
+            f "Testing %s" path |> writeInfo
+            executeCommand "git" "clean -Xdfn"
 
 [<EntryPoint>]
 let main argv = 
     let argv = argv |> Array.toList
     match argv with
-    | [path] ->
-        let path = DirectoryInfo(path).FullName
-        let target = findGitProjects path
-        let rs = readInput <| f "Dot you want to remove all untracted files/folder from %A (y/n)" path
+    | [ path ] ->
+        let fullPath = DirectoryInfo(path).FullName
+        let dryRun dry =
+            match dry with
+            | true ->   f ">> Test target path %A" fullPath     |> writeInfo
+            | false ->  f ">> Start removing"                   |> writeInfo
+            let target = findGitProjects fullPath
+            target |> Seq.iter (remove dry)
+
+        dryRun true
+
+        let rs = readInput <| f "[Confirm] Do you want to remove all above files/folders from %A (y/n)" fullPath
         match rs with
-        | "y" ->
-            target |> Seq.iter remove
+        | "y" -> dryRun false
         | _ -> ()
     | _ ->
         "Invalid command" |> writeError
