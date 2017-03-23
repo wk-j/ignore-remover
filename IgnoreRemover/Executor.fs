@@ -4,6 +4,7 @@ open System.Diagnostics
 open System
 open System.Text
 open IgnoreRemover.Formatter
+open System
 
 
 let executeCommand cmd args=
@@ -17,11 +18,13 @@ let executeCommand cmd args=
 
     let outputHandler (s:DataReceivedEventArgs) = 
         let line = s.Data
-        //builder.AppendLine(line)  |> ignore
-        s.Data |> writeInfo
+        if (String.IsNullOrEmpty >> not) line then
+            " -- " + line |> writeInfo
 
     let errorHandler (s: DataReceivedEventArgs) =
-        s.Data |> writeError 
+        let line = s.Data
+        if (String.IsNullOrEmpty >> not) line then
+            " -- " + line |> writeError 
 
     let ps = new Process()
     ps.StartInfo <- info
