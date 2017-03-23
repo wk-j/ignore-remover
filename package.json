@@ -1,0 +1,14 @@
+{
+  "name": "ignore-remover",
+  "version": "0.0.1",
+  "description": "Remove all git ignore files/folders from system",
+  "main": "index.js",
+   "bin": {
+    "ignore-remove": "./Scripts/index.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "wk <somnuk.wk@gmail.com> (https://github.com/wk-j)",
+  "license": "ISC"
+}
