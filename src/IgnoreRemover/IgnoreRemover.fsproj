@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.Net.Sdk">
+    <PropertyGroup>
+        <ProjectGuid>{D3AE9171-E568-498D-A393-E9695E40734A}</ProjectGuid>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>netcoreapp2.1</TargetFramework>
+        <PackAsTool>true</PackAsTool>
+        <PackageId>wk.IgnoreRemover</PackageId>
+        <ToolCommandName>wk-ignore-remover</ToolCommandName>
+        <Version>0.1.0</Version>
+    </PropertyGroup>
+    <ItemGroup>
+        <Compile Include="Formatter.fs" />
+        <Compile Include="Executor.fs" />
+        <Compile Include="Program.fs" />
+    </ItemGroup>
+</Project>

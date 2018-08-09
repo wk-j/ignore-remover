@@ -1,18 +1,40 @@
-var solution = "IgnoreRemover.sln";
+#addin "wk.StartProcess"
+#addin "wk.ProjectParser"
 
-Task("Build").Does(() => {
-    DotNetBuild(solution, settings => {
+using PS = StartProcess.Processor;
+using ProjectParser;
+
+var npi = EnvironmentVariable("npi");
+var name = "IgnoreRemover";
+
+var currentDir = new DirectoryInfo(".").FullName;
+var info = Parser.Parse($"src/{name}/{name}.fsproj");
+
+Task("Pack").Does(() => {
+    CleanDirectory("publish");
+    DotNetCorePack($"src/{name}", new DotNetCorePackSettings {
+        OutputDirectory = "publish"
     });
 });
 
-Task("Restore").Does(() => {
-    var solutions = GetFiles("./**/*.sln");
-    foreach(var sol in solutions)
-    {
-        Information("Restoring {0}", sol);
-        NuGetRestore(sol);
-    }
+Task("Publish-NuGet")
+    .IsDependentOn("Pack")
+    .Does(() => {
+        var nupkg = new DirectoryInfo("publish").GetFiles("*.nupkg").LastOrDefault();
+        var package = nupkg.FullName;
+        NuGetPush(package, new NuGetPushSettings {
+            Source = "https://www.nuget.org/api/v2/package",
+            ApiKey = npi
+        });
 });
 
-var target = Argument("target", "default");
+Task("Install")
+    .IsDependentOn("Pack")
+    .Does(() => {
+        var home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+        PS.StartProcess($"dotnet tool uninstall -g {info.PackageId}");
+        PS.StartProcess($"dotnet tool install   -g {info.PackageId}  --add-source {currentDir}/publish --version {info.Version}");
+    });
+
+var target = Argument("target", "Pack");
 RunTarget(target);
