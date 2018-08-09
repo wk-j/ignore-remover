@@ -15,5 +15,5 @@ Inspired by [surrealist/ignore-remover](https://github.com/surrealist/ignore-rem
 ## Usage
 
 ```bash
-> wk-ignore-remove <TargetDirectory>
+> wk-ignore-remover <TargetDirectory>
 ```
